@@ -5,14 +5,59 @@ export default function init() {
   const scDir = path.join(process.cwd(), ".sc");
 
   if (fs.existsSync(scDir)) {
-    console.log("Repository already initialized.");
+    console.log("Reinitialized existing source control repository");
+    return;
   }
 
   fs.mkdirSync(scDir, { recursive: true });
-  console.log(".sc directory created");
 
-  const branchFile = path.join(scDir, "branch");
-  fs.writeFileSync(branchFile, "main");
+  // make refs/branches directory
+  fs.mkdirSync(path.join(scDir, "refs/branches"), {
+    recursive: true,
+  }); /* Each file in the is a branch and the content of the file is the commit hash */
 
-  console.log("Repository initialized.");
+  // add a default branch
+  fs.writeFileSync(path.join(scDir, "refs/branches/main"), "");
+
+  // head
+  const headFile = path.join(scDir, "HEAD"); // points to the current branch your're on by default it points to the main branch
+  fs.writeFileSync(headFile, "ref: refs/branches/main");
+
+  // staging
+  const stagingFile = path.join(scDir, "staging");
+  fs.writeFileSync(stagingFile, "");
+
+  const configFile = path.join(scDir, "config", "");
+
+  const configContent = {
+    core: {
+      repositoryformatversion: 0,
+      filemode: false,
+      bare: false,
+      logallrefupdates: true,
+      ignorecase: true,
+      precomposeunicode: true,
+    },
+
+    remote: {
+      origin: {
+        url: "",
+        fetch: "+refs/heads/*:refs/remotes/origin/*",
+      },
+    },
+
+    branch: {
+      main: {
+        remote: "origin",
+        merge: "refs/heads/main",
+      },
+    },
+  };
+
+  fs.writeFileSync(configFile, JSON.stringify(configContent, null, 2));
+
+  //   const branchFile = path.join(scDir, "branch");
+  //   fs.writeFileSync(branchFile, "main");
+
+  //   console.log("Repository initialized.");
 }

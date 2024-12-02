@@ -1,43 +1,54 @@
 import fs from "fs";
 import path from "path";
+import chalk from "chalk";
 
-export default function branch(branchName) {
+export function sc_branch(branch) {
   const scDir = path.join(process.cwd(), ".sc");
+  const branchDir = path.join(scDir, "refs/branches");
+  const HEAD = path.join(scDir, "HEAD");
 
-  if (!fs.existsSync(scDir)) {
-    console.log(
-      "Not a repocitory. Please run `sc init` to initialize a repocitory."
-    );
+  if (branch) {
+    const branchPath = path.join(branchDir, branch);
+
+    if (fs.existsSync(branchPath)) {
+      console.log(
+        `Branch ${branch} already exists, use switchto to switch to it`
+      );
+    }
+
+    fs.writeFileSync(branchPath, "");
+    console.log(`Branch ${branch} created`);
     return;
   }
 
-  const branchFile = path.join(scDir, "branch");
+  // All branches
+  const branches = fs.readdirSync(branchDir);
+  const readHead = fs.readFileSync(HEAD, "utf-8");
+  const currentBranch = readHead.split("refs/branches/")[1]?.trim();
 
-  if (branchName) {
-    // Create a new branch by writing the branch name inside the branch file
-    // If the branch already exists, do not create a duplicate
-    if (fs.existsSync(branchFile)) {
-      const existingBranches = fs.readFileSync(branchFile, "utf-8").split("\n");
+  console.log("Source control branches:");
 
-      if (existingBranches.includes(branchName)) {
-        console.log(`Branch ${branchName} already exists.`);
-        return;
-      }
-
-      existingBranches.push(branchName);
-      fs.writeFileSync(branchFile, existingBranches.join("\n"));
-      console.log(`Branch ${branchName} created.`);
+  for (let branch of branches) {
+    if (branch === currentBranch) {
+      console.log(chalk.green(`* ${branch} (current)`));
     } else {
-      fs.writeFileSync(branchFile, branchName);
-      console.log(`Branch ${branchName} created.`);
-    }
-  } else {
-    // List all the branches if no branch name is provided
-    if (fs.existsSync(branchFile)) {
-      const branches = fs.readFileSync(branchFile, "utf-8").split("\n");
-      console.log("Branches:", branches.join(", "));
-    } else {
-      console.log("No branches found.");
+      console.log(chalk.yellow(`${branch}`));
     }
   }
+}
+
+export function sc_switchto(branch) {
+  const scDir = path.join(process.cwd(), ".sc");
+  const branchDir = path.join(scDir, "refs/branches");
+  const HEAD = path.join(scDir, "HEAD");
+
+  const branchPath = path.join(branchDir, branch);
+
+  if (!fs.existsSync(branchPath)) {
+    console.log(`Branch ${branch} does not exist`);
+    return;
+  }
+
+  fs.writeFileSync(HEAD, `ref: refs/branches/${branch}`);
+  console.log(`Switched to branch [${chalk.green(branch)}]`);
 }

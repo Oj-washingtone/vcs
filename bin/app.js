@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { program } from "commander";
 import init from "../src/commands/init.js";
-import branch from "../src/commands/branch.js";
-
+import { sc_branch, sc_switchto } from "../src/commands/branch.js";
+import { sc_status } from "../src/commands/staging.js";
 program
   .name("sc")
   .description("A distributed source control system")
@@ -16,14 +16,12 @@ program
 program
   .command("branch [branch]")
   .description("List all branches, create new branch")
-  .action(branch);
+  .action(sc_branch);
 
 program
-  .command("switchto [branch]")
+  .command("switchto <branch>")
   .description("Switch to a branch")
-  .action((branch) => {
-    console.log(`Switched to ${branch}`);
-  });
+  .action(sc_switchto);
 
 program
   .command("merge <branch>")
@@ -35,17 +33,7 @@ program
 program
   .command("status")
   .description("Show the working tree status")
-  .action(() => {
-    console.log("On branch main");
-    console.log("No commits yet");
-    console.log("Changes to be committed:");
-    console.log("  (use 'sc add <file>...' to update what will be committed)");
-    console.log(
-      "  (use 'sc restore <file>...' to discard changes in working directory)"
-    );
-    console.log("");
-    console.log("        new file:   README.md");
-  });
+  .action(sc_status);
 
 program
   .command("add <file>")
