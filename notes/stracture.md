@@ -40,3 +40,6 @@ To github.com:Oj-washingtone/vcs.git
  * [new branch]      main -> main
 branch 'main' set up to track 'origin/main'.
 ```
+
+Excludes folder contains anything that should be ignored / excluded
+excludes.txt

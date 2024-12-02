@@ -3,11 +3,22 @@
   "version": "1.0.0",
   "description": "Version control System",
   "main": "app.js",
+  "bin": {
+    "sc": "./bin/app.js"
+  },
+  "type": "module",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Washingtone Jalang'O Otieno",
   "license": "ISC",
+  "dependencies": {
+    "@clack/prompts": "^0.8.2",
+    "commander": "^12.1.0",
+    "nodemon": "^3.1.7"
+  },
   "devDependencies": {
     "jest": "^29.7.0"
   }
