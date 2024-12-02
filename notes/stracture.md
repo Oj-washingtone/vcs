@@ -14,6 +14,8 @@ example
 testdata/Readme.md | 2024-04-14 | Created/ updated/ Deleted
 ```
 
+Commit logs example
+
 ```bash
 [main (root-commit) fd61ce0] First commit
  6 files changed, 3684 insertions(+)
@@ -25,7 +27,7 @@ testdata/Readme.md | 2024-04-14 | Created/ updated/ Deleted
  create mode 100644 package.json
 ```
 
-Push
+Push logs example
 
 ```bash
 Enumerating objects: 8, done.
