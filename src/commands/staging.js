@@ -4,6 +4,8 @@ import path from "path";
 import chalk from "chalk";
 import isRepo from "../utils/isRepo.js";
 import getFiles from "../utils/get_files.js";
+import stagedFiles from "../utils/get_staged_files.js";
+import trackFileChnages from "../utils/track_file_changes.js";
 
 export function sc_status() {
   if (!isRepo()) {
@@ -31,78 +33,50 @@ export function sc_status() {
     return;
   }
 
-  // Read staging file and parse it into a structured format
-  let staging = [];
-  if (fs.existsSync(stagingFile)) {
-    staging = fs
-      .readFileSync(stagingFile, "utf-8")
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line);
-  }
-
-  const files = getFiles();
+  const staging = stagedFiles();
+  const fileChanges = trackFileChnages(staging);
 
   console.log(`On branch ${chalk.green(currentBranch)}`);
-  console.log("Changes to be committed:");
 
   if (staging.length > 0) {
+    console.log("Changes to be committed:");
     staging.forEach((file) => {
-      const parts = file.split("|").map((part) => part.trim());
-
-      if (parts.length === 3) {
-        const filePath = parts[0];
-        const modifiedTime = new Date(parts[1]);
-        const status = parts[2];
-
-        const fileInWorkingDir = files.find((f) => f.path === filePath);
-        if (fileInWorkingDir) {
-          const fileModifiedTime = new Date(fileInWorkingDir.modifiedTime);
-
-          if (fileModifiedTime > modifiedTime) {
-            console.log(chalk.green(`\tmodified: ${filePath} `));
-          } else {
-            console.log(
-              chalk.green(
-                `\t${status}: ${filePath} | Last modified: ${modifiedTime}`
-              )
-            );
-          }
-        }
-      } else {
-        console.log(chalk.red(`\tMalformed entry in staging file: ${file}`));
-      }
+      console.log(chalk.green(`\t${file.status}: ${file.path} `));
     });
-  } else {
-    console.log(chalk.red("\tNo files staged for commit"));
+
+    console.log("\n\tuse 'sc unstage <file>...' to unstage");
+    console.log("\tuse 'sc commit -m <message>' to commit changes \n");
   }
 
-  console.log("Changes not staged for commit:");
+  if (fileChanges.modifiedFiles.length > 0) {
+    console.log("Changes not staged for commit:");
 
-  if (files.length > 0) {
-    files.forEach((file) => {
-      if (!staging.some((stagedFile) => stagedFile.includes(file.path))) {
-        console.log(
-          chalk.yellow(
-            `\tmodified: ${file.path} | Last modified: ${file.modifiedTime}`
-          )
-        );
-      }
+    fileChanges.modifiedFiles.forEach((file) => {
+      console.log(chalk.yellow(`\t${file.status}: ${file.path} `));
     });
-  } else {
-    console.log(chalk.red("\tNo modified files found"));
+
+    console.log(
+      "\n\tuse 'sc add <file>...' or 'sc add .' to add them to staging  \n"
+    );
   }
 
-  console.log("Untracked files:");
+  if (fileChanges.untrackedFiles.length > 0) {
+    console.log("Untracked files:");
+    fileChanges.untrackedFiles.forEach((file) => {
+      console.log(chalk.red(`\t${file.status}: ${file.path} `));
+    });
+  }
 
-  const trackedFiles = staging.map((stagedFile) =>
-    stagedFile.split("|")[0].trim()
+  console.log(
+    `\nUse "sc add <file>..." or "sc add ." to update what will be committed \n`
   );
-  files.forEach((file) => {
-    if (!trackedFiles.includes(file.path)) {
-      console.log(chalk.red(`\t${file.path}`));
-    }
-  });
+}
 
-  console.log(`Use "sc add <file>..." to update what will be committed`);
+// add files to staging area
+export function sc_add(file) {
+  if (file === ".") {
+    console.log("Added all files to the staging area");
+    return;
+  }
+  console.log(`Added ${file} to the staging area`);
 }

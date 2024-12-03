@@ -2,7 +2,7 @@
 import { program } from "commander";
 import init from "../src/commands/init.js";
 import { sc_branch, sc_switchto } from "../src/commands/branch.js";
-import { sc_status } from "../src/commands/staging.js";
+import { sc_status, sc_add } from "../src/commands/staging.js";
 import { commit_hash } from "../src/utils/commit_hash.js";
 program
   .name("sc")
@@ -39,13 +39,7 @@ program
 program
   .command("add <file>")
   .description("Add a file to the staging area")
-  .action((file) => {
-    if (file === ".") {
-      console.log("Added all files to the staging area");
-      return;
-    }
-    console.log(`Added ${file} to the staging area`);
-  });
+  .action(sc_add);
 
 program
   .command("restore <file>")
