@@ -56,8 +56,16 @@ export default function init() {
 
   fs.writeFileSync(configFile, JSON.stringify(configContent, null, 2));
 
-  //   const branchFile = path.join(scDir, "branch");
-  //   fs.writeFileSync(branchFile, "main");
+  const commitsDir = path.join(scDir, "commits");
+  fs.mkdirSync(commitsDir, { recursive: true });
 
-  //   console.log("Repository initialized.");
+  const objects = path.join(scDir, "objects");
+  fs.mkdirSync(objects, { recursive: true });
+
+  const ignoreFile = path.join(process.cwd(), ".scignore");
+  if (!fs.existsSync(ignoreFile)) {
+    fs.writeFileSync(ignoreFile, "");
+  }
+
+  console.log("OK: Source control repository initialized in ./.sc/");
 }

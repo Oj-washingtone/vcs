@@ -3,6 +3,7 @@ import { program } from "commander";
 import init from "../src/commands/init.js";
 import { sc_branch, sc_switchto } from "../src/commands/branch.js";
 import { sc_status } from "../src/commands/staging.js";
+import { commit_hash } from "../src/utils/commit_hash.js";
 program
   .name("sc")
   .description("A distributed source control system")
@@ -62,7 +63,9 @@ program
   .description("Record changes to the repository")
   .requiredOption("-m, --message <message>", "commit message")
   .action((options) => {
-    console.log(`[main (root-commit) 1a2b3c4d] ${options.message}`);
+    console.log(
+      `[main (root-commit) ${commit_hash(options.message)}] ${options.message}`
+    );
   });
 
 program
@@ -118,5 +121,8 @@ program
     }
     console.log("Clone completed.");
   });
+
+// TODO: sc config - configuration file to be updated dynamically later using sc config.
+// TODO: unstage - remove file from staging area
 
 program.parse(process.argv);
