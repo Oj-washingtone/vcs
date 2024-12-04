@@ -6,14 +6,11 @@ import isRepo from "../utils/isRepo.js";
 import getFiles from "../utils/get_files.js";
 import stagedFiles from "../utils/get_staged_files.js";
 import trackFileChnages from "../utils/track_file_changes.js";
-import { removeIgnoresFromStages } from "../utils/remove_ignores_from_stages.js";
 
 export function sc_status() {
   if (!isRepo()) {
     return;
   }
-
-  removeIgnoresFromStages();
 
   const scDir = path.join(process.cwd(), ".sc");
   const stagingFile = path.join(scDir, "staging");

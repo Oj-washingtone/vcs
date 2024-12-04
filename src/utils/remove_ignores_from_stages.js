@@ -2,26 +2,35 @@ import fs from "fs";
 import path from "path";
 import stagedFiles from "./get_staged_files.js";
 import { getIgnoredPatterns } from "./ignore.js";
+import micromatch from "micromatch";
 
 export function removeIgnoresFromStages() {
   const ignorePatterns = getIgnoredPatterns();
-  const stagedFilesList = stagedFiles();
   const staging = path.join(process.cwd(), ".sc/staging");
 
-  if (!fs.existsSync(staging)) {
+  const normalizedPatterns = ignorePatterns.map((pattern) =>
+    pattern.endsWith("/") || pattern.endsWith("**") ? pattern : `${pattern}/**`
+  );
+
+  const stagedFilesList = stagedFiles();
+  const stagingFilePath = path.join(process.cwd(), ".sc/staging");
+
+  if (!fs.existsSync(stagingFilePath)) {
     return;
   }
 
-  const updatedStagedFiles = stagedFilesList.filter((file) => {
+  const filesToKeep = stagedFilesList.filter((file) => {
     const relativePath = path.relative(process.cwd(), file.path);
-    return !ignorePatterns.some((pattern) => {
-      return relativePath.includes(pattern);
-    });
+    return !micromatch.isMatch(relativePath, normalizedPatterns);
   });
 
-  const updatedStagingContent = updatedStagedFiles
-    .map((file) => `${file.path} | ${file.modifiedTime} | ${file.status}`)
-    .join("\n");
+  // remove content of staging and write only files to keep
+  fs.writeFileSync(stagingFilePath, "");
 
-  fs.writeFileSync(staging, updatedStagingContent);
+  filesToKeep.forEach((file) => {
+    fs.appendFileSync(
+      stagingFilePath,
+      `${file.path} | ${file.modifiedTime.toISOString()} | ${file.status}\n`
+    );
+  });
 }

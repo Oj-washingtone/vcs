@@ -1,3 +1,4 @@
+import micromatch from "micromatch";
 import path from "path";
 import fs from "fs";
 import stagedFiles from "./get_staged_files.js";

@@ -1,7 +1,8 @@
 import getFiles from "./get_files.js";
 import stagedFiles from "./get_staged_files.js";
+import { removeIgnoresFromStages } from "./remove_ignores_from_stages.js";
 
-export default function trackFileChnages() {
+export default function trackFileChanges() {
   let modifiedFiles = [];
   let untrackedFiles = [];
   let deletedFiles = [];
@@ -45,6 +46,15 @@ export default function trackFileChnages() {
       });
     }
   });
+
+  // Check if .scignore is modified
+  const scignoreModified = modifiedFiles.some(
+    (file) => file.path === ".scignore"
+  );
+
+  if (scignoreModified) {
+    removeIgnoresFromStages();
+  }
 
   return {
     modifiedFiles,
