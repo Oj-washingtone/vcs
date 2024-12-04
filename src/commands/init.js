@@ -25,7 +25,7 @@ export default function init() {
 
   // staging
   const stagingFile = path.join(scDir, "staging");
-  fs.writeFileSync(stagingFile, JSON.stringify([]));
+  fs.writeFileSync(stagingFile, "");
 
   const configFile = path.join(scDir, "config", "");
 

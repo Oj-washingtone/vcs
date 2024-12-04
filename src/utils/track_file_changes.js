@@ -4,6 +4,8 @@ import stagedFiles from "./get_staged_files.js";
 export default function trackFileChnages() {
   let modifiedFiles = [];
   let untrackedFiles = [];
+  let deletedFiles = [];
+
   const staged_files = stagedFiles();
   const files = getFiles();
 
@@ -11,18 +13,6 @@ export default function trackFileChnages() {
     const stagedFile = staged_files.find((staged) => staged.path === file.path);
 
     if (stagedFile) {
-      const fileExistsInWorkingDir = files.some(
-        (f) => f.path === stagedFile.path
-      );
-
-      if (!fileExistsInWorkingDir) {
-        deletedFiles.push({
-          path: stagedFile.path,
-          modifiedTime: stagedFile.modifiedTime,
-          status: "deleted",
-        });
-      }
-
       const fileModifiedTime = new Date(file.modifiedTime).getTime();
       const stagedModifiedTime = new Date(stagedFile.modifiedTime).getTime();
 
@@ -37,7 +27,21 @@ export default function trackFileChnages() {
       untrackedFiles.push({
         path: file.path,
         modifiedTime: file.modifiedTime,
-        status: "untracked",
+        status: "new",
+      });
+    }
+  });
+
+  staged_files.forEach((stagedFile) => {
+    const fileExistsInWorkingDir = files.some(
+      (f) => f.path === stagedFile.path
+    );
+
+    if (!fileExistsInWorkingDir) {
+      deletedFiles.push({
+        path: stagedFile.path,
+        modifiedTime: stagedFile.modifiedTime,
+        status: "deleted",
       });
     }
   });
@@ -45,5 +49,6 @@ export default function trackFileChnages() {
   return {
     modifiedFiles,
     untrackedFiles,
+    deletedFiles,
   };
 }

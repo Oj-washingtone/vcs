@@ -43,3 +43,20 @@ branch 'main' set up to track 'origin/main'.
 
 Excludes folder contains anything that should be ignored / excluded
 excludes.txt
+
+Blob folder stores only the content of files, not its name or permission
+Tree is used to store directory stractures, what files/directories are in the tree, their name and permission
+
+commits store include the commit message, author and committer, parent commits etc
+
+// all objects are identified by a 40 character SHA-1 HASH also known as object hash
+Example: e88f7a929cd70b0274c4ea33b209c97fa845fdbc.
+
+# Git object storage
+
+git objects are stored in /git/objects
+the path to the object is the is derived from its hash
+the path to object with hash e88f7a929cd70b0274c4ea33b209c97fa845fdbc would be
+./.git/objects/e8/8f7a929cd70b0274c4ea33b209c97fa845fdbc
+
+NOte that the file is not placed directly into /objects folder, instead it is placed in a directory named with the first two characters of the object hash, the remaining 38 are used as the file name
