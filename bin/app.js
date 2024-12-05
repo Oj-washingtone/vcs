@@ -4,6 +4,8 @@ import init from "../src/commands/init.js";
 import { sc_branch, sc_switchto } from "../src/commands/branch.js";
 import { sc_status, sc_add } from "../src/commands/staging.js";
 import { commit_hash } from "../src/utils/commit_hash.js";
+import { sc_commit } from "../src/commands/commit.js";
+
 program
   .name("sc")
   .description("A distributed source control system")
@@ -56,11 +58,7 @@ program
   .command("commit")
   .description("Record changes to the repository")
   .requiredOption("-m, --message <message>", "commit message")
-  .action((options) => {
-    console.log(
-      `[main (root-commit) ${commit_hash(options.message)}] ${options.message}`
-    );
-  });
+  .action(sc_commit);
 
 program
   .command("log")

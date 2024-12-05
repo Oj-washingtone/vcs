@@ -56,9 +56,6 @@ export default function init() {
 
   fs.writeFileSync(configFile, JSON.stringify(configContent, null, 2));
 
-  const commitsDir = path.join(scDir, "commits");
-  fs.mkdirSync(commitsDir, { recursive: true });
-
   const objects = path.join(scDir, "objects");
   fs.mkdirSync(objects, { recursive: true });
 
