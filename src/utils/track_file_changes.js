@@ -47,7 +47,6 @@ export default function trackFileChanges() {
     }
   });
 
-  // Check if .scignore is modified
   const scignoreModified = modifiedFiles.some(
     (file) => file.path === ".scignore"
   );

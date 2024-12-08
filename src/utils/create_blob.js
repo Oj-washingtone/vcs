@@ -8,11 +8,13 @@ export function createBlob(filePath) {
   const hash = crypto.createHash("sha1").update(fileContent).digest("hex");
   const blobPath = path.join(".sc", "objects", hash.slice(0, 2), hash.slice(2));
 
-  if (!fs.existsSync(blobPath)) {
-    const compressedContent = zlib.deflateSync(fileContent);
-    fs.mkdirSync(path.dirname(blobPath), { recursive: true });
-    fs.writeFileSync(blobPath, compressedContent);
+  if (fs.existsSync(blobPath)) {
+    return hash;
   }
+
+  const compressedContent = zlib.deflateSync(fileContent);
+  fs.mkdirSync(path.dirname(blobPath), { recursive: true });
+  fs.writeFileSync(blobPath, compressedContent);
 
   return hash;
 }

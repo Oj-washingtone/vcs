@@ -24,7 +24,6 @@ export function removeIgnoresFromStages() {
     return !micromatch.isMatch(relativePath, normalizedPatterns);
   });
 
-  // remove content of staging and write only files to keep
   fs.writeFileSync(stagingFilePath, "");
 
   filesToKeep.forEach((file) => {

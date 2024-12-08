@@ -1,74 +1,64 @@
-import { program } from "commander";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
 import isRepo from "../utils/isRepo.js";
-import getFiles from "../utils/get_files.js";
 import stagedFiles from "../utils/get_staged_files.js";
 import trackFileChnages from "../utils/track_file_changes.js";
+import getFiles from "../utils/get_files.js";
+import { getTreeFiles } from "../utils/get_tree_files.js";
+import { parseStagingFile } from "../utils/parse_staging_files.js";
+import { generateFileHash } from "../utils/generate_hash.js";
 
 export function sc_status() {
-  if (!isRepo()) {
-    return;
-  }
+  const stagedFilesList = stagedFiles();
+  const allFiles = getFiles();
+  const latestCommitTreeFiles = getTreeFiles();
 
-  const scDir = path.join(process.cwd(), ".sc");
-  const stagingFile = path.join(scDir, "staging");
-  const HEAD = path.join(scDir, "HEAD");
+  const stagedFilesMap = new Map(
+    stagedFilesList.map((file) => [file.path, true])
+  );
+  const latestCommitTreeFilesMap = new Map(
+    latestCommitTreeFiles.map((file) => [file.path, file.hash])
+  );
 
-  if (!fs.existsSync(HEAD)) {
-    console.log(
-      chalk.red(
-        "HEAD file not found. Something went wrong with the repository initialization."
-      )
-    );
-    return;
-  }
+  const modifiedFiles = [];
+  const untrackedFiles = [];
 
-  const readHead = fs.readFileSync(HEAD, "utf-8").trim();
-  const currentBranch = readHead.split("refs/branches/")[1]?.trim();
+  allFiles.forEach(({ path: filePath }) => {
+    const fileHash = generateFileHash(filePath);
 
-  if (!currentBranch) {
-    console.log(chalk.red("Unable to determine the current branch."));
-    return;
-  }
+    if (stagedFilesMap.has(filePath)) {
+      return;
+    }
 
-  const staging = stagedFiles();
-  const fileChanges = trackFileChnages(staging);
+    const commitFile = latestCommitTreeFilesMap.get(filePath);
 
-  console.log(`On branch ${chalk.green(currentBranch)}`);
+    if (commitFile) {
+      if (commitFile !== fileHash) {
+        modifiedFiles.push({ path: filePath, status: "modified" });
+      }
+    } else {
+      untrackedFiles.push({ path: filePath, status: "untracked" });
+    }
+  });
 
-  if (staging.length > 0) {
-    console.log("Changes to be committed:");
-    staging.forEach((file) => {
-      console.log(chalk.green(`\t${file.status}: ${file.path} `));
-    });
+  console.log("Changes to be committed:");
+  stagedFilesList.forEach(({ path, status }) => {
+    console.log(chalk.green(`  ${status}: ${path}`));
+  });
 
-    console.log("\n\tuse 'sc unstage <file>...' to unstage");
-    console.log("\tuse 'sc commit -m <message>' to commit changes \n");
-  }
+  console.log("\nChanges not staged for commit:");
+  modifiedFiles.forEach(({ path, status }) => {
+    console.log(chalk.yellow(`  ${status}: ${path}`));
+  });
 
-  if (fileChanges.modifiedFiles.length > 0) {
-    console.log("Changes not staged for commit:");
-
-    fileChanges.modifiedFiles.forEach((file) => {
-      console.log(chalk.yellow(`\t${file.status}: ${file.path} `));
-    });
-
-    console.log(
-      "\n\tuse 'sc add <file>...' or 'sc add .' to add them to staging  \n"
-    );
-  }
-
-  if (fileChanges.untrackedFiles.length > 0) {
-    console.log("Untracked files:");
-    fileChanges.untrackedFiles.forEach((file) => {
-      console.log(chalk.red(`\t${file.status}: ${file.path} `));
-    });
-  }
+  console.log("\nUntracked files:");
+  untrackedFiles.forEach(({ path }) => {
+    console.log(chalk.red(`  ${path}`));
+  });
 
   console.log(
-    `\nUse "sc add <file>..." or "sc add ." to update what will be committed \n`
+    `\nUse "sc add <file>..." or "sc add ." to stage files for commit.\n`
   );
 }
 
@@ -83,7 +73,6 @@ export function sc_add(file) {
 
   let currentStaging = [];
 
-  // Load existing staging file contents if it exists
   if (fs.existsSync(stagingFile)) {
     const content = fs.readFileSync(stagingFile, "utf-8");
     currentStaging = content
@@ -95,91 +84,52 @@ export function sc_add(file) {
       });
   }
 
-  const { modifiedFiles, untrackedFiles, deletedFiles } = trackFileChnages();
-  const allFiles = [...modifiedFiles, ...untrackedFiles, ...deletedFiles];
+  const allFiles = getFiles();
+  const lastCommitedFiles = getTreeFiles();
 
   if (file === ".") {
     allFiles.forEach((file) => {
+      const fileHash = generateFileHash(file.path);
+      const commitFile = lastCommitedFiles.find((f) => f.path === file.path);
+
       const index = currentStaging.findIndex(
         (staged) => staged.path === file.path
       );
 
-      if (index !== -1) {
-        // Update the existing entry in staging
-        currentStaging[index] = {
-          path: file.path,
-          date: new Date(file.modifiedTime || Date.now()).toISOString(),
-          status: file.status,
-        };
+      if (commitFile) {
+        if (commitFile.hash !== fileHash) {
+          if (index !== -1) {
+            currentStaging[index] = {
+              path: file.path,
+              date: new Date(file.modifiedTime || Date.now()).toISOString(),
+              status: "modified",
+            };
+          } else {
+            currentStaging.push({
+              path: file.path,
+              date: new Date(file.modifiedTime || Date.now()).toISOString(),
+              status: "modified",
+            });
+          }
+        }
       } else {
-        // Add the new file to staging
-        currentStaging.push({
-          path: file.path,
-          date: new Date(file.modifiedTime || Date.now()).toISOString(),
-          status: file.status,
-        });
+        if (index === -1) {
+          currentStaging.push({
+            path: file.path,
+            date: new Date(file.modifiedTime || Date.now()).toISOString(),
+            status: "new",
+          });
+        }
       }
     });
 
+    // update the staging file
+    const updatedContent = currentStaging
+      .map(({ path, date, status }) => `${path} | ${date} | ${status}`)
+      .join("\n");
+
+    fs.writeFileSync(stagingFile, updatedContent);
+
     console.log("Staged all files successfully.");
-  } else {
-    const fileToAdd = allFiles.find((f) => f.path.endsWith(file));
-
-    if (fileToAdd) {
-      const index = currentStaging.findIndex(
-        (staged) => staged.path === fileToAdd.path
-      );
-
-      if (index !== -1) {
-        // Update the existing entry
-        currentStaging[index] = {
-          path: fileToAdd.path,
-          date: new Date(fileToAdd.modifiedTime || Date.now()).toISOString(),
-          status: fileToAdd.status,
-        };
-      } else {
-        // Add the file to staging
-        currentStaging.push({
-          path: fileToAdd.path,
-          date: new Date(fileToAdd.modifiedTime || Date.now()).toISOString(),
-          status: fileToAdd.status,
-        });
-      }
-
-      console.log(`Staged file: ${fileToAdd.path}`);
-    } else {
-      console.error(`Error: File '${file}' not found in tracked changes.`);
-      return;
-    }
   }
-
-  // Handle deleted files separately
-  deletedFiles.forEach((deletedFile) => {
-    const index = currentStaging.findIndex(
-      (staged) => staged.path === deletedFile.path
-    );
-
-    if (index !== -1) {
-      // Update status and time for deleted files in the staging area
-      currentStaging[index] = {
-        path: deletedFile.path,
-        date: new Date(Date.now()).toISOString(), // Use current time for deleted files
-        status: deletedFile.status,
-      };
-    } else {
-      // If not already in staging, add it
-      currentStaging.push({
-        path: deletedFile.path,
-        date: new Date(Date.now()).toISOString(),
-        status: deletedFile.status,
-      });
-    }
-  });
-
-  // Write updated staging content to the file
-  const updatedContent = currentStaging
-    .map(({ path, date, status }) => `${path} | ${date} | ${status}`)
-    .join("\n");
-
-  fs.writeFileSync(stagingFile, updatedContent);
 }

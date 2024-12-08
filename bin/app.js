@@ -3,7 +3,6 @@ import { program } from "commander";
 import init from "../src/commands/init.js";
 import { sc_branch, sc_switchto } from "../src/commands/branch.js";
 import { sc_status, sc_add } from "../src/commands/staging.js";
-import { commit_hash } from "../src/utils/commit_hash.js";
 import { sc_commit } from "../src/commands/commit.js";
 
 program

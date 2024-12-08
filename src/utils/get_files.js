@@ -21,10 +21,9 @@ export default function getFiles() {
     if (stats.isDirectory()) {
       files = files.concat(getFilesFromDir(fullPath, ignoredPatterns, rootDir));
     } else if (stats.isFile()) {
-      // Track file path and last modified time
       files.push({
         path: path.relative(rootDir, fullPath),
-        modifiedTime: stats.mtime, // Last modified time
+        modifiedTime: stats.mtime,
       });
     }
   });
@@ -47,10 +46,9 @@ function getFilesFromDir(dir, ignoredPatterns, rootDir) {
     if (stats.isDirectory()) {
       files = files.concat(getFilesFromDir(fullPath, ignoredPatterns, rootDir));
     } else if (stats.isFile()) {
-      // Track file path and last modified time
       files.push({
         path: path.relative(rootDir, fullPath),
-        modifiedTime: stats.mtime, // Last modified time
+        modifiedTime: stats.mtime,
       });
     }
   });

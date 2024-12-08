@@ -9,12 +9,11 @@ export function createCommit(treeHash, message, author) {
   const branchName = headContent.startsWith("ref: ")
     ? headContent.slice(5).trim()
     : headContent;
-
   const branchPath = path.join(".sc", branchName);
 
-  console.log(branchPath);
-
   let parentHash = null;
+
+  // If the branch already has a commit history, get the parent commit
   if (fs.existsSync(branchPath)) {
     parentHash = fs.readFileSync(branchPath, "utf8").trim();
   }
@@ -34,11 +33,14 @@ export function createCommit(treeHash, message, author) {
     hash.slice(2)
   );
 
-  if (!fs.existsSync(commitPath)) {
-    fs.mkdirSync(path.dirname(commitPath), { recursive: true });
-    fs.writeFileSync(commitPath, commitContent);
+  if (fs.existsSync(commitPath)) {
+    return hash; // If the commit already exists, return the existing hash
   }
 
+  fs.mkdirSync(path.dirname(commitPath), { recursive: true });
+  fs.writeFileSync(commitPath, commitContent);
+
+  // Update the branch reference to point to the new commit
   fs.writeFileSync(branchPath, hash);
 
   return hash;

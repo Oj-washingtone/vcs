@@ -59,6 +59,12 @@ export default function init() {
   const objects = path.join(scDir, "objects");
   fs.mkdirSync(objects, { recursive: true });
 
+  const logs = path.join(scDir, "logs", "refs", "heads");
+  fs.mkdirSync(logs, { recursive: true });
+
+  const headLogs = path.join(scDir, "logs", "HEAD");
+  fs.writeFileSync(headLogs, "");
+
   const ignoreFile = path.join(process.cwd(), ".scignore");
   if (!fs.existsSync(ignoreFile)) {
     fs.writeFileSync(ignoreFile, "");
@@ -66,3 +72,5 @@ export default function init() {
 
   console.log("OK: Source control repository initialized in ./.sc/");
 }
+
+/// These are some notes to be trackes
