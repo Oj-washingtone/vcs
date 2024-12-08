@@ -10,6 +10,12 @@ import { parseStagingFile } from "../utils/parse_staging_files.js";
 import { generateFileHash } from "../utils/generate_hash.js";
 
 export function sc_status() {
+  const scDir = path.join(process.cwd(), ".sc");
+
+  if (!isRepo(scDir)) {
+    return;
+  }
+
   const stagedFilesList = stagedFiles();
   const allFiles = getFiles();
   const latestCommitTreeFiles = getTreeFiles();
@@ -123,7 +129,6 @@ export function sc_add(file) {
       }
     });
 
-    // update the staging file
     const updatedContent = currentStaging
       .map(({ path, date, status }) => `${path} | ${date} | ${status}`)
       .join("\n");
@@ -131,5 +136,55 @@ export function sc_add(file) {
     fs.writeFileSync(stagingFile, updatedContent);
 
     console.log("Staged all files successfully.");
+  } else {
+    const targetFile = allFiles.find((f) => f.path === file);
+
+    if (!targetFile) {
+      console.error(`Error: File "${file}" does not exist.`);
+      return;
+    }
+
+    const fileHash = generateFileHash(targetFile.path);
+    const commitFile = lastCommitedFiles.find(
+      (f) => f.path === targetFile.path
+    );
+
+    const index = currentStaging.findIndex(
+      (staged) => staged.path === targetFile.path
+    );
+
+    if (commitFile) {
+      if (commitFile.hash !== fileHash) {
+        if (index !== -1) {
+          currentStaging[index] = {
+            path: targetFile.path,
+            date: new Date(targetFile.modifiedTime || Date.now()).toISOString(),
+            status: "modified",
+          };
+        } else {
+          currentStaging.push({
+            path: targetFile.path,
+            date: new Date(targetFile.modifiedTime || Date.now()).toISOString(),
+            status: "modified",
+          });
+        }
+      }
+    } else {
+      if (index === -1) {
+        currentStaging.push({
+          path: targetFile.path,
+          date: new Date(targetFile.modifiedTime || Date.now()).toISOString(),
+          status: "new",
+        });
+      }
+    }
+
+    console.log(`Staged file "${file}" successfully.`);
   }
+
+  const updatedContent = currentStaging
+    .map(({ path, date, status }) => `${path} | ${date} | ${status}`)
+    .join("\n");
+
+  fs.writeFileSync(stagingFile, updatedContent);
 }

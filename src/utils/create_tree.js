@@ -25,7 +25,7 @@ export function createTree(stagedFiles) {
       parentCommitHash.slice(0, 2),
       parentCommitHash.slice(2)
     );
-    if (fs.existsSync(commitPath)) {
+    if (fs.existsSync(commitPath) && fs.statSync(commitPath).isFile()) {
       const commitContent = fs.readFileSync(commitPath, "utf8").trim();
       const treeLine = commitContent
         .split("\n")

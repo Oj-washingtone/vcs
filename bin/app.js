@@ -4,6 +4,7 @@ import init from "../src/commands/init.js";
 import { sc_branch, sc_switchto } from "../src/commands/branch.js";
 import { sc_status, sc_add } from "../src/commands/staging.js";
 import { sc_commit } from "../src/commands/commit.js";
+import { logs } from "../src/commands/logs.js";
 
 program
   .name("sc")
@@ -59,16 +60,7 @@ program
   .requiredOption("-m, --message <message>", "commit message")
   .action(sc_commit);
 
-program
-  .command("log")
-  .description("Show commit logs")
-  .action(() => {
-    console.log("commit 1a2b3c4d");
-    console.log("Author: John Doe <dmlmldm >");
-    console.log("Date:   Mon Aug 23 17:01:00 2021 +0200");
-    console.log("");
-    console.log("    Initial commit");
-  });
+program.command("log").description("Show commit history").action(logs);
 
 program
   .command("push [branch]")
