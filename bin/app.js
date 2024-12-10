@@ -5,6 +5,7 @@ import { sc_branch, sc_switchto } from "../src/commands/branch.js";
 import { sc_status, sc_add } from "../src/commands/staging.js";
 import { sc_commit } from "../src/commands/commit.js";
 import { logs } from "../src/commands/logs.js";
+import { sc_merge } from "../src/commands/merge.js";
 
 program
   .name("sc")
@@ -29,9 +30,7 @@ program
 program
   .command("merge <branch>")
   .description("Merge a branch into the current branch")
-  .action((branch) => {
-    console.log(`Merged ${branch} into the current branch`);
-  });
+  .action(sc_merge);
 
 program
   .command("status")

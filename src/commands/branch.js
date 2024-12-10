@@ -1,23 +1,20 @@
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
+import createBranch from "../utils/create_branch.js";
+import isRepo from "../utils/isRepo.js";
 
 export function sc_branch(branch) {
+  if (!isRepo) {
+    return;
+  }
+
   const scDir = path.join(process.cwd(), ".sc");
   const branchDir = path.join(scDir, "refs/branches");
   const HEAD = path.join(scDir, "HEAD");
 
   if (branch) {
-    const branchPath = path.join(branchDir, branch);
-
-    if (fs.existsSync(branchPath)) {
-      console.log(
-        `Branch ${branch} already exists, use switchto to switch to it`
-      );
-    }
-
-    fs.writeFileSync(branchPath, "");
-    console.log(`Branch ${branch} created`);
+    createBranch(branch);
     return;
   }
 
