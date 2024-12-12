@@ -12,7 +12,7 @@ import { generateFileHash } from "../utils/generate_hash.js";
 export function sc_status() {
   const scDir = path.join(process.cwd(), ".sc");
 
-  if (!isRepo(scDir)) {
+  if (!isRepo()) {
     return;
   }
 

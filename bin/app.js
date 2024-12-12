@@ -59,7 +59,13 @@ program
   .requiredOption("-m, --message <message>", "commit message")
   .action(sc_commit);
 
-program.command("log").description("Show commit history").action(logs);
+program
+  .command("log")
+  .description("Show commit history")
+  .option("-g, --graph", "Show commit history in a graph format")
+  .action((options) => {
+    logs(options.graph);
+  });
 
 program
   .command("push [branch]")

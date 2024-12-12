@@ -72,5 +72,3 @@ export default function init() {
 
   console.log("OK: Source control repository initialized in ./.sc/");
 }
-
-/// These are some notes to be trackes
