@@ -47,6 +47,22 @@ Initialize a new repository. By default, the main branch is named `main`.
 sc init
 ```
 
+### `config`
+
+Configure your repository settings, specifically the user name and email that will be used for commits.
+
+#### Options
+
+- `-u, --user <name>`: Set the user name for the repository.
+  - Example: `sc config --user "John Doe"`
+- `-e, --email <email>`: Set the user email for the repository.
+
+  - Example: `sc config --email "johndoe@example.com"`
+
+- Use the `--user` option to set the user name that will be used for commits in the repository.
+- Use the `--email` option to set the user email that will be used for commits in the repository.
+- Both options can be used together to configure both the user name and email at once.
+
 #### `branch [branch]`
 
 List all branches or create a new branch.
@@ -135,33 +151,39 @@ sc help <command>
    sc init
    ```
 
-2. Create and switch to a new branch:
+2. Configure repocitory user and email
+
+   ```bash
+   sc config -u "My name" -e "example@example.com"
+   ```
+
+3. Create and switch to a new branch:
 
    ```bash
    sc branch feature-xyz
    sc switchto feature-xyz
    ```
 
-3. Add files to the staging area:
+4. Add files to the staging area:
 
    ```bash
    sc add index.js
    ```
 
-4. Commit changes:
+5. Commit changes:
 
    ```bash
    sc commit -m "Added index.js"
    ```
 
-5. Merge the feature branch into the main branch:
+6. Merge the feature branch into the main branch:
 
    ```bash
    sc switchto main
    sc merge feature-xyz
    ```
 
-6. View the commit history:
+7. View the commit history:
 
    ```bash
    sc log

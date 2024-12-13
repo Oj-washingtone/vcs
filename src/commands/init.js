@@ -42,16 +42,17 @@ export default function init() {
     remote: {
       origin: {
         url: "",
-        fetch: "+refs/heads/*:refs/remotes/origin/*",
+        fetch: "+refs/branches/*:refs/remotes/origin/*",
       },
     },
 
     branch: {
       main: {
         remote: "origin",
-        merge: "refs/heads/main",
+        merge: "refs/branches/main",
       },
     },
+    user: {},
   };
 
   fs.writeFileSync(configFile, JSON.stringify(configContent, null, 2));
