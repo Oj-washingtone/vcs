@@ -167,6 +167,12 @@ View the commit history.
 sc log
 ```
 
+View the commit history in graph format
+
+```bash
+sc log -g
+```
+
 #### `clone [options] <repository>`
 
 Clone a repository.
