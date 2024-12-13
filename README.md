@@ -166,9 +166,3 @@ sc help <command>
    ```bash
    sc log
    ```
-
----
-
-## Author
-
-**Washingtone Jalang'O Otiene**
