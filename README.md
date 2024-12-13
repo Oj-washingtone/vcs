@@ -173,14 +173,6 @@ View the commit history in graph format
 sc log -g
 ```
 
-#### `clone [options] <repository>`
-
-Clone a repository.
-
-```bash
-sc clone <repository-url>
-```
-
 #### `help [command]`
 
 Display help for a specific command.
