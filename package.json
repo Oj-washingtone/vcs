@@ -1,5 +1,5 @@
 {
-  "name": "vcs",
+  "name": "source-control-tool",
   "version": "1.0.0",
   "description": "Version control System",
   "main": "app.js",
