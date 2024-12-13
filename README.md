@@ -1,17 +1,59 @@
 # Source Control Tool (sc)
 
-`sc` is a distributed source control system designed for developers to manage their code repositories efficiently. This lightweight tool offers intuitive commands for version control and collaboration.
-
----
+`sc` is a lightweight, distributed source control system designed for developers who prefer a minimalistic yet powerful tool for managing code repositories. With an intuitive command structure, `sc` makes version control and collaboration straightforward without the overhead of more complex systems.
 
 ## Features
 
-- Initialize repositories
-- Create, switch, and manage branches
-- Add files to staging and commit changes
-- Merge branches
-- View commit history and repository status
-- Clone repositories
+- **Repository Initialization**: Set up a source control system in minutes.
+- **Branch Management**: Create, switch, and manage branches with ease.
+- **Staging & Committing**: Stage files and commit changes in a simple workflow.
+- **Branch Merging**: Supports both fast-forward and recursive merges for divergent branches.
+- **Commit History**: View commit logs and repository status.
+- **Repository Cloning**: Clone repositories to work on existing projects.
+
+## How It Works
+
+`sc` is built with simplicity and efficiency in mind. Unlike heavyweight systems, it uses a minimal set of files to manage version control, including:
+
+- **Staging Area**: Where files you want to commit are listed with their statuses.
+- **Configuration**: Stores user and repository configuration.
+- **Branch Management**: Keeps track of branch states and commit history.
+- **Objects Directory**: Stores compressed file content and commit trees.
+- **Merge Strategies**: Offers fast-forward and recursive merges based on branch history.
+
+### Unique Approach
+
+#### **Repository Initialization**
+
+`sc` initializes repositories by creating essential directories and files:
+
+- `config` for repository settings (including user name and email).
+- `Ref` for storing branch information.
+- `Objects` for storing compressed commit data.
+- `HEAD` to keep track of the current branch.
+- `.scignore` for ignoring untracked files.
+
+#### **Staging**
+
+`sc` automatically scans the working directory for files that need to be tracked or committed, excluding those listed in `.scignore`. Files are tracked with a unique status and timestamp in a staging file, helping you stay on top of what needs to be committed.
+
+#### **Committing Code**
+
+Committing in `sc` is a two-step process:
+
+1. Retrieve the latest commit from the current branch (or use the root commit if it’s the first commit).
+2. Generate new blobs for modified files, create a tree snapshot, and store the commit in the repository.
+
+This structure allows you to track file changes efficiently and creates a simple yet powerful version control mechanism.
+
+#### **Branch Merging**
+
+`sc` supports two merge strategies:
+
+1. **Fast Forward Merge**: When a branch is directly behind another, simply update the current branch pointer to the tip of the other.
+2. **Recursive Merge**: When branches diverge, `sc` finds the common ancestor and merges the trees. Conflicts are detected, and if any occur, they need to be resolved manually.
+
+This flexibility provides a seamless experience for both linear and divergent development workflows.
 
 ---
 
