@@ -11,7 +11,7 @@ import sc_config from "../src/commands/config.js";
 program
   .name("sc")
   .description("A distributed source control system")
-  .version("1.0.0");
+  .version("1.0.6");
 
 program
   .command("init")
