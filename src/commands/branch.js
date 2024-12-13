@@ -5,11 +5,12 @@ import createBranch from "../utils/create_branch.js";
 import isRepo from "../utils/isRepo.js";
 
 export function sc_branch(branch) {
-  if (!isRepo) {
+  const scDir = path.join(process.cwd(), ".sc");
+
+  if (!isRepo()) {
     return;
   }
 
-  const scDir = path.join(process.cwd(), ".sc");
   const branchDir = path.join(scDir, "refs/branches");
   const HEAD = path.join(scDir, "HEAD");
 

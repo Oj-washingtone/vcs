@@ -74,3 +74,7 @@ export function getTreeFiles() {
 
   return Array.from(files.values());
 }
+
+// A---B---C  (main)
+//      \
+//       D---E (feature)

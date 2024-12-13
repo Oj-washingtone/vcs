@@ -1,17 +1,14 @@
 import fs from "fs";
 import path from "path";
+import getCommitAncestors from "../utils/get_commit_ancestors.js";
 import isRepo from "../utils/isRepo.js";
+import chalk from "chalk";
 import getCurrentBranch from "../utils/get_current_branch.js";
-import { createTree } from "../utils/create_tree.js";
-import { createCommit } from "../utils/create_commit.js";
-import loadTree from "../utils/load_tree.js";
-import mergeTrees from "../utils/merge_trees.js";
-import saveTree from "../utils/save_tree.js";
-import isAncestor from "../utils/check_merge_ancestry.js";
+import fastForwardMerge from "../utils/fast_forward_merge.js";
+import threeWayMerge from "../utils/3_way_recussive_merge.js";
 
 export function sc_merge(branch) {
-  if (!isRepo) {
-    console.error("Not a repository.");
+  if (!isRepo()) {
     return;
   }
 
@@ -28,43 +25,49 @@ export function sc_merge(branch) {
   const currentBranchPath = getCurrentBranch();
   const currentBranchName = path.basename(currentBranchPath);
 
-  if (currentBranchPath === branchPath) {
-    console.log("Already up to date.");
-    return;
-  }
+  const incomingBranchCommitHash = fs.readFileSync(branchPath, "utf8").trim();
+  const currentCommitHash = fs.readFileSync(currentBranchPath, "utf8").trim();
 
   console.log(`Merging branch "${branch}" into "${currentBranchName}"...`);
 
-  const targetCommitHash = fs.readFileSync(branchPath, "utf8").trim();
-  const currentCommitHash = fs.readFileSync(currentBranchPath, "utf8").trim();
+  const currentBranchAncestors = getCommitAncestors(currentCommitHash);
+  const incomingBranchAncestors = getCommitAncestors(incomingBranchCommitHash);
 
-  if (
-    isAncestor(scDir, currentCommitHash, targetCommitHash) ||
-    isAncestor(scDir, targetCommitHash, currentCommitHash)
-  ) {
-    console.log(`"${branch}" is already up to date.`);
+  if (currentBranchAncestors.includes(incomingBranchCommitHash)) {
+    console.log(`Already up to date with ${branch}`);
     return;
   }
 
-  const targetTree = loadTree(scDir, targetCommitHash);
-  const currentTree = loadTree(scDir, currentCommitHash);
+  if (
+    currentBranchAncestors.includes(incomingBranchCommitHash) ||
+    incomingBranchAncestors.includes(currentCommitHash)
+  ) {
+    const merged = fastForwardMerge(
+      currentBranchPath,
+      incomingBranchCommitHash
+    );
+    if (merged) {
+      console.log(`OK: Merged ${branch} into ${currentBranchName}`);
+      console.log(chalk.green.bold(incomingBranchCommitHash));
+    }
+    return;
+  }
 
-  try {
-    const mergedTree = mergeTrees(currentTree, targetTree);
+  const commonAncestor = currentBranchAncestors.find((hash) =>
+    incomingBranchAncestors.includes(hash)
+  );
 
-    const mergedTreeHash = saveTree(scDir, mergedTree);
-
-    const mergeCommitHash = createCommit(
-      mergedTreeHash,
-      `Merge branch '${branch}' into '${currentBranchName}'`,
-      "Author Name <author@example.com>",
-      [currentCommitHash, targetCommitHash]
+  if (commonAncestor) {
+    const mergeChange = threeWayMerge(
+      currentBranchPath,
+      currentCommitHash,
+      incomingBranchCommitHash,
+      commonAncestor
     );
 
-    fs.writeFileSync(currentBranchPath, mergeCommitHash);
-
-    console.log(`Merge complete. New commit: ${mergeCommitHash}`);
-  } catch (error) {
-    console.error(error.message);
+    if (mergeChange) {
+      console.log(`OK: Merged ${branch} into ${currentBranchName}`);
+      console.log(chalk.green.bold(mergeChange));
+    }
   }
 }
