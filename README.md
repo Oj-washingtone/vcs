@@ -9,7 +9,6 @@
 - **Staging & Committing**: Stage files and commit changes in a simple workflow.
 - **Branch Merging**: Supports both fast-forward and recursive merges for divergent branches.
 - **Commit History**: View commit logs and repository status.
-- **Repository Cloning**: Clone repositories to work on existing projects.
 
 ## How It Works
 
