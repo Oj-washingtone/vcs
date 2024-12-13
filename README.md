@@ -191,16 +191,16 @@ Record changes to the repository.
 
 #### `log [options]`
 
-View the commit history.
-
-```bash
-sc log
-```
-
 View the commit history in graph format
 
 ```bash
 sc log -g
+```
+
+View the commit history.
+
+```bash
+sc log
 ```
 
 #### `help [command]`
