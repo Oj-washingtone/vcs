@@ -2,6 +2,37 @@
 
 `sc` is a lightweight, distributed source control system designed for developers who prefer a minimalistic yet powerful tool for managing code repositories. With an intuitive command structure, `sc` makes version control and collaboration straightforward without the overhead of more complex systems.
 
+# Table of Contents
+
+1. [Features](#features)
+   - [Repository Initialization](#repository-initialization)
+   - [Branch Management](#branch-management)
+   - [Staging & Committing](#staging--committing)
+   - [Branch Merging](#branch-merging)
+   - [Commit History](#commit-history)
+2. [How It Works](#how-it-works)
+   - [Unique Approach](#unique-approach)
+     - [Repository Initialization](#repository-initialization-1)
+     - [Staging](#staging)
+     - [Committing Code](#committing-code)
+     - [Branch Merging](#branch-merging-1)
+3. [Installation](#installation)
+   - [Prerequisites](#prerequisites)
+   - [Install via npm](#install-via-npm)
+4. [Usage](#usage)
+   - [Commands](#commands)
+     - [`init`](#init)
+     - [`config`](#config)
+     - [`branch [branch]`](#branch-branch)
+     - [`switchto <branch>`](#switchto-branch)
+     - [`merge <branch>`](#merge-branch)
+     - [`status`](#status)
+     - [`add <file>`](#add-file)
+     - [`commit [options]`](#commit-options)
+     - [`log [options]`](#log-options)
+     - [`help [command]`](#help-command)
+5. [Example Workflow](#example-workflow)
+
 ## Features
 
 - **Repository Initialization**: Set up a source control system in minutes.
