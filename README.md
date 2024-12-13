@@ -166,15 +166,3 @@ sc help <command>
    ```bash
    sc log
    ```
-
----
-
-## License
-
-This project is licensed under the ISC License. See the `LICENSE` file for details.
-
----
-
-## Author
-
-**Washingtone Jalang'O Otiene**

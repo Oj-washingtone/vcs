@@ -1,6 +1,6 @@
 {
   "name": "source-control-tool",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Version control System",
   "main": "app.js",
   "bin": {
