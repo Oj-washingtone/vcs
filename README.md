@@ -234,5 +234,5 @@ sc help <command>
 7. View the commit history:
 
    ```bash
-   sc log
+   sc log -g
    ```
