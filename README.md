@@ -11,7 +11,7 @@
    - [Branch Merging](#branch-merging)
    - [Commit History](#commit-history)
 2. [How It Works](#how-it-works)
-   - [Unique Approach](#unique-approach)
+   - [Approach](#approach)
      - [Repository Initialization](#repository-initialization-1)
      - [Staging](#staging)
      - [Committing Code](#committing-code)
@@ -51,7 +51,7 @@
 - **Objects Directory**: Stores compressed file content and commit trees.
 - **Merge Strategies**: Offers fast-forward and recursive merges based on branch history.
 
-### Unique Approach
+### Approach
 
 #### **Repository Initialization**
 
