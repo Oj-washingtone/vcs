@@ -3,15 +3,11 @@ import path from "path";
 import chalk from "chalk";
 import isRepo from "../utils/isRepo.js";
 import stagedFiles from "../utils/get_staged_files.js";
-import trackFileChnages from "../utils/track_file_changes.js";
 import getFiles from "../utils/get_files.js";
 import { getTreeFiles } from "../utils/get_tree_files.js";
-import { parseStagingFile } from "../utils/parse_staging_files.js";
 import { generateFileHash } from "../utils/generate_hash.js";
 
 export function sc_status() {
-  const scDir = path.join(process.cwd(), ".sc");
-
   if (!isRepo()) {
     return;
   }

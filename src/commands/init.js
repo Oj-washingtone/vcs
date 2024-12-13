@@ -11,16 +11,14 @@ export default function init() {
 
   fs.mkdirSync(scDir, { recursive: true });
 
-  // make refs/branches directory
   fs.mkdirSync(path.join(scDir, "refs/branches"), {
     recursive: true,
-  }); /* Each file in the is a branch and the content of the file is the commit hash */
+  });
 
-  // add a default branch
   fs.writeFileSync(path.join(scDir, "refs/branches/main"), "");
 
   // head
-  const headFile = path.join(scDir, "HEAD"); // points to the current branch your're on by default it points to the main branch
+  const headFile = path.join(scDir, "HEAD");
   fs.writeFileSync(headFile, "ref: refs/branches/main");
 
   // staging
