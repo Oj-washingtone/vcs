@@ -6,6 +6,7 @@ import { sc_status, sc_add } from "../src/commands/staging.js";
 import { sc_commit } from "../src/commands/commit.js";
 import { logs } from "../src/commands/logs.js";
 import { sc_merge } from "../src/commands/merge.js";
+import sc_config from "../src/commands/config.js";
 
 program
   .name("sc")
@@ -55,6 +56,13 @@ program
   .action((options) => {
     logs(options.graph);
   });
+
+program
+  .command("config")
+  .description("Configure repository settings")
+  .option("-u, --user <name>", "Set the user name for the repository")
+  .option("-e, --email <email>", "Set the user email for the repository")
+  .action(sc_config);
 
 // program
 //   .command("push [branch]")

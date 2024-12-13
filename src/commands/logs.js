@@ -85,7 +85,7 @@ export function logs(graph = false) {
       console.log(graphRepresentation);
     } else {
       commitHistory.forEach((commitLog) => {
-        console.log(chalk.yellow(`Commit: ${commitLog.commitHash}`));
+        console.log(chalk.yellow(`Commit: ${commitLog.tree}`));
         console.log(chalk.white(`Author: ${commitLog.author}`));
         console.log(chalk.white(`Message: ${commitLog.message}\n`));
       });
