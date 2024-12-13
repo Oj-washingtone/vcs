@@ -43,17 +43,6 @@ program
   .action(sc_add);
 
 program
-  .command("restore <file>")
-  .description("to discard changes in working directory")
-  .action((file) => {
-    if (file === ".") {
-      console.log("Restored all files");
-      return;
-    }
-    console.log(`Restored ${file}`);
-  });
-
-program
   .command("commit")
   .description("Record changes to the repository")
   .requiredOption("-m, --message <message>", "commit message")
@@ -67,32 +56,32 @@ program
     logs(options.graph);
   });
 
-program
-  .command("push [branch]")
-  .description("Push changes to the remote repository")
-  .option("-u, --set-upstream", "Set upstream for the specified branch")
-  .option("-r, --remote <remote>", "Specify the remote repository", "origin")
-  .action((branch = "main", options) => {
-    const remote = options.remote;
-    if (options.setUpstream) {
-      console.log(`Setting upstream for ${branch} to ${remote}/${branch}...`);
-    }
-    console.log(`Pushed ${branch} to ${remote}/${branch}`);
-  });
+// program
+//   .command("push [branch]")
+//   .description("Push changes to the remote repository")
+//   .option("-u, --set-upstream", "Set upstream for the specified branch")
+//   .option("-r, --remote <remote>", "Specify the remote repository", "origin")
+//   .action((branch = "main", options) => {
+//     const remote = options.remote;
+//     if (options.setUpstream) {
+//       console.log(`Setting upstream for ${branch} to ${remote}/${branch}...`);
+//     }
+//     console.log(`Pushed ${branch} to ${remote}/${branch}`);
+//   });
 
-program
-  .command("pull [branch]")
-  .description("Pull changes from the remote repository")
-  .option("-r, --remote <remote>", "Specify the remote repository", "origin")
-  .option("-v, --verbose", "Show detailed output")
-  .action((branch = "main", options) => {
-    const remote = options.remote;
-    if (options.verbose) {
-      console.log(`Fetching changes from ${remote}/${branch}...`);
-      console.log("Resolving conflicts if any...");
-    }
-    console.log(`Pulled ${branch} from ${remote}/${branch}`);
-  });
+// program
+//   .command("pull [branch]")
+//   .description("Pull changes from the remote repository")
+//   .option("-r, --remote <remote>", "Specify the remote repository", "origin")
+//   .option("-v, --verbose", "Show detailed output")
+//   .action((branch = "main", options) => {
+//     const remote = options.remote;
+//     if (options.verbose) {
+//       console.log(`Fetching changes from ${remote}/${branch}...`);
+//       console.log("Resolving conflicts if any...");
+//     }
+//     console.log(`Pulled ${branch} from ${remote}/${branch}`);
+//   });
 
 program
   .command("clone <repository>")
