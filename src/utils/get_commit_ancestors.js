@@ -1,5 +1,3 @@
-import fs from "fs";
-import path from "path";
 import { getParentCommitHash } from "./get_parent_commit_hash.js";
 
 export default function getCommitAncestors(commitHash) {
