@@ -51,13 +51,13 @@ sc init
 
 Configure your repository settings, specifically the user name and email that will be used for commits.
 
-#### Options
-
 - `-u, --user <name>`: Set the user name for the repository.
   - Example: `sc config --user "John Doe"`
 - `-e, --email <email>`: Set the user email for the repository.
 
-  - Example: `sc config --email "johndoe@example.com"`
+  - Example:
+
+  `sc config --email "johndoe@example.com"`
 
 - Use the `--user` option to set the user name that will be used for commits in the repository.
 - Use the `--email` option to set the user email that will be used for commits in the repository.
