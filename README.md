@@ -180,7 +180,7 @@ Add a file to the staging area.
 sc add <file-name>
 ```
 
-Add all file to the staging area.
+Add all files to the staging area.
 
 ```bash
 sc add .
