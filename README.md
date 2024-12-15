@@ -61,7 +61,7 @@
 - `Ref` for storing branch information.
 - `Objects` for storing compressed commit data.
 - `HEAD` to keep track of the current branch.
-- `.scignore` for ignoring untracked files.
+- `.scignore` for ignoring files.
 
 #### **Staging**
 
